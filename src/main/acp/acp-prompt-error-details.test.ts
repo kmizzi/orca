@@ -104,7 +104,7 @@ describe('shared ACP prompt error details', () => {
       expect(text).toHaveLength(1)
       expect(text[0]).toBe(
         'OMP: Internal error: No model selected.\n\n' +
-          'Use /login, set an API key environment variable, or create C:\\Users\\USER\\.omp\\agent\\agent.db\n\n' +
+          'Use /login, set an API key environment variable, or create C:\\qa\\.omp\\agent\\agent.db\n\n' +
           'Then use /model to select a model.'
       )
       expect((await f.rig.turns()).map((turn) => [turn.state, turn.outcome])).toEqual([
