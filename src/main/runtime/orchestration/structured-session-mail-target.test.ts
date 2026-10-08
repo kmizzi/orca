@@ -317,7 +317,13 @@ function clearConversation(store: Store, sessionId: string, operationId: string)
   }
   store.records.set(sessionId, {
     ...current,
-    lease: { ...current.lease, claimStatus: 'released', ownerProcess: null },
+    providerHandleChain: [],
+    lease: {
+      ...current.lease,
+      provenHandleLinkId: null,
+      claimStatus: 'released',
+      ownerProcess: null
+    },
     providerContextBoundary: {
       operationId,
       afterFence: current.lease.runtimeFence,

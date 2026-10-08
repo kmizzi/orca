@@ -80,13 +80,15 @@ function liveRecord(sessionId: string): AgentSessionRecord {
   return located(agentSessionRecordFixture(agentSessionLeaseFixture({ sessionId })))
 }
 
-/** Clear leaves the same conversation stopped with retained provider ancestry. */
+/** Clear releases provider ownership while retaining the conversation. */
 function clearedRecord(sessionId: string, operationId = 'clear-1'): AgentSessionRecord {
   const base = records.get(sessionId) ?? liveRecord(sessionId)
   return {
     ...base,
+    providerHandleChain: [],
     lease: {
       ...base.lease,
+      provenHandleLinkId: null,
       claimStatus: 'released',
       ownerProcess: null,
       deathEvidence: {
