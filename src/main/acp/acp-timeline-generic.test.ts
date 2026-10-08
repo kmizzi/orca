@@ -183,7 +183,7 @@ describe('generic ACP translation', () => {
       apply(translator.promptFailed('send-3', new AcpAgentError(-32603, ''), 1500))
       const rows = (await rig.rows()).filter((row) => row.body.kind === 'status')
       expect(rows.map((row) => row.body)).toEqual([
-        { kind: 'status', tone: 'error', text: 'Upstream failed' },
+        { kind: 'status', tone: 'error', text: `${agentName ?? 'The agent'}: Upstream failed` },
         { kind: 'status', tone: 'error', text: fallback }
       ])
       expect((await rig.turns()).map((turn) => turn.outcome)).toEqual([

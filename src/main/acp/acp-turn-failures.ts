@@ -11,9 +11,36 @@ function acpStopReasonFailed(stopReason: string): boolean {
   return FAILED_STOP_REASONS.includes(stopReason)
 }
 
-/** The provider's words in its error answer to `session/prompt`. */
-export function acpPromptErrorDetail(dialect: AcpDialect, error: AcpAgentError): string {
-  return dialect.promptErrorDetail?.(error) ?? error.message
+function acpPromptErrorDataText(data: unknown): string | undefined {
+  if (data === undefined || data === null) {
+    return undefined
+  }
+  if (typeof data === 'string') {
+    return data.trim() ? data : undefined
+  }
+  if (
+    typeof data === 'object' &&
+    'details' in data &&
+    typeof data.details === 'string' &&
+    data.details.trim()
+  ) {
+    return data.details
+  }
+  try {
+    return JSON.stringify(data)
+  } catch {
+    return undefined
+  }
+}
+
+/** The same error-data interpretation for every ACP agent, in the existing failure surface. */
+export function acpPromptErrorDetail(error: AcpAgentError, agentName?: string): string {
+  const details = acpPromptErrorDataText(error.data)
+  const message = error.message.trim()
+  const reason = details === undefined ? message : message ? `${message}: ${details}` : details
+  return (
+    providerDiagnostic(reason ? `${agentName ?? 'The agent'}: ${reason}` : '', 'person')?.text ?? ''
+  )
 }
 
 /** One error row per failed turn, in the provider's own words, as a Codex turn-ending error reads:

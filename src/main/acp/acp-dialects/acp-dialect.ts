@@ -3,7 +3,6 @@ import type { AgentJournalToolCallItem } from '../../../shared/agent-session-jou
 import type { AgentSessionPromptResponse } from '../../../shared/agent-session-question-answer'
 import type { NativeChatBackgroundTaskBlock } from '../../../shared/native-chat-types'
 import type { ProviderTimelineRequestBody } from '../../native-chat/agent-session-timeline/provider-timeline-event'
-import type { AcpAgentError } from '../acp-errors'
 import type { ToolCallUpdate } from '../generated/acp-protocol.generated'
 
 export type AcpRequestPresentation = {
@@ -53,8 +52,6 @@ export type AcpDialect = {
   request?(method: string, params: unknown): AcpRequestPresentation | undefined
   /** Requests answered at once instead of shown to the person. */
   settleRequest?(method: string, params: unknown): AcpRequestSettlement | undefined
-  /** The provider's words in a `session/prompt` error answer, when its message is generic. */
-  promptErrorDetail?(error: AcpAgentError): string | undefined
   /** The row for a failed turn the provider gave no words for. */
   failedTurnText?(stopReason: string): string
 }

@@ -29,7 +29,7 @@ const SUBSTANTIVE_UPDATES = [
 export type AcpTimelineTranslatorOptions = {
   sessionId: string
   dialect?: AcpDialect
-  /** The agent's display name, for a failed turn the provider gave no words for. */
+  /** The agent's display name, for its failure row and prompt error detail. */
   agentName?: string
 }
 
@@ -86,7 +86,9 @@ export class AcpTimelineTranslator {
    *  reaches here. */
   promptFailed(clientMessageId: string, error: Error, at: number): ProviderTimelineEvent[] {
     const detail =
-      error instanceof AcpAgentError ? acpPromptErrorDetail(this.dialect, error) : undefined
+      error instanceof AcpAgentError
+        ? acpPromptErrorDetail(error, this.options.agentName)
+        : undefined
     const ended = this.prompts.last
     if (this.prompts.current?.clientMessageId !== clientMessageId) {
       // The provider already ended this turn; its answer may carry the only copy of the reason.
@@ -100,7 +102,9 @@ export class AcpTimelineTranslator {
   /** The agent refused the prompt before its turn began: forgets it and answers the agent's reason.
    *  Null once the turn opened, when the refusal ends that turn instead (`promptFailed`). */
   promptRefused(clientMessageId: string, error: AcpAgentError): string | null {
-    return this.prompts.refuse(clientMessageId) ? acpPromptErrorDetail(this.dialect, error) : null
+    return this.prompts.refuse(clientMessageId)
+      ? acpPromptErrorDetail(error, this.options.agentName)
+      : null
   }
 
   private finishPrompt(

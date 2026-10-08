@@ -40,6 +40,7 @@ const promptComplete = (promptId: string, stopReason: string, agentResult: strin
   agentResult
 })
 const rpcError = new AcpAgentError(-32603, 'Internal error', { message: REASON })
+const RPC_REASON = `Grok: Internal error: ${JSON.stringify({ message: REASON })}`
 
 function statusRows(rows: AgentJournalRenderItem[]) {
   return rows.flatMap((row) => (row.body.kind === 'status' ? [{ row, body: row.body }] : []))
@@ -113,7 +114,7 @@ describe('a failed ACP turn says why', () => {
     f.apply(lane.promptFailed('c1', rpcError, 1004))
     const failures = statusRows(await f.rig.rows())
     expect(failures).toHaveLength(1)
-    expect(failures[0]?.body).toEqual({ kind: 'status', tone: 'error', text: REASON })
+    expect(failures[0]?.body).toEqual({ kind: 'status', tone: 'error', text: RPC_REASON })
   })
 
   it.each(['retry_state', 'turn_completed', 'prompt_complete', 'prompt error answer'] as const)(
@@ -149,7 +150,9 @@ describe('a failed ACP turn says why', () => {
         )
       )
       const failures = statusRows(await f.rig.rows())
-      expect(failures.map((failure) => failure.body.text)).toEqual([REASON])
+      expect(failures.map((failure) => failure.body.text)).toEqual([
+        source === 'prompt error answer' ? RPC_REASON : REASON
+      ])
     }
   )
 

@@ -28,7 +28,6 @@ const promptCompleteSchema = z.looseObject({
   stopReason: z.string(),
   agentResult: z.string().nullish()
 })
-const promptErrorDataSchema = z.looseObject({ message: z.string() })
 /** Grok writes its result text as the failure's reason only for these ends. */
 const FAILED_STOP_REASONS = ['error', 'rate_limit']
 
@@ -177,7 +176,6 @@ export const GROK_ACP_DIALECT: AcpDialect = {
   toolBackgroundTasks: grokToolBackgroundTasks,
   notification,
   contextWindow,
-  promptErrorDetail: (error) => promptErrorDataSchema.safeParse(error.data).data?.message,
   failedTurnText: (stopReason) =>
     stopReason === 'rate_limit'
       ? 'Grok usage limit reached.'

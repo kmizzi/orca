@@ -9,7 +9,7 @@ import {
 import type { ProviderTimelineEvent } from '../native-chat/agent-session-timeline/provider-timeline-event'
 import { openProviderTimelineRig } from '../native-chat/agent-session-timeline/provider-timeline-assembler-test-support'
 import { GROK_ACP_DIALECT } from './acp-dialects/grok-dialect'
-import type { AcpRequestPresentation } from './acp-dialects/acp-dialect'
+import type { AcpDialect, AcpRequestPresentation } from './acp-dialects/acp-dialect'
 import { AcpTimelineTranslator } from './acp-timeline-translator'
 import { PromptResponseSchema } from './generated/acp-protocol.generated'
 
@@ -67,11 +67,17 @@ function fixtureAnswer(
 }
 
 /** Captured frames go through translation, assembly and the real serialized journal. */
-export async function openAcpFixtureRig() {
+export async function openAcpFixtureRig(
+  options: { dialect?: AcpDialect; agentName?: string } = {}
+) {
   const rig = await openProviderTimelineRig()
   let providerSessionId = 'session-1'
   const translator = () =>
-    new AcpTimelineTranslator({ sessionId: providerSessionId, dialect: GROK_ACP_DIALECT })
+    new AcpTimelineTranslator({
+      sessionId: providerSessionId,
+      dialect: options.dialect ?? GROK_ACP_DIALECT,
+      agentName: options.agentName ?? 'Grok'
+    })
   let lane = translator()
   const requests = new Map<
     string | number,
