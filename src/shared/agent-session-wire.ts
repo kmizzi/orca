@@ -483,7 +483,7 @@ export type AgentSessionOptionsResult = {
   /** Session/account/transport support. Absent means unknown, never unsupported. */
   fastModeSupport?: AgentSessionFastModeSupport
   current: {
-    model: string
+    model?: string
     effort?: string
     /** Canonical preference for the next turn. Explicit false is meaningful. */
     fastMode?: boolean

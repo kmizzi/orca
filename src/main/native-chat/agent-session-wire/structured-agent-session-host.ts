@@ -14,6 +14,7 @@ import { createRestartReconciler } from './structured-agent-session-restart-reco
 import type { AgentSessionSubscribeInput } from './structured-agent-session-subscribers'
 import { StructuredAgentSessionTaskQueue } from './structured-agent-session-task-queue'
 import * as providerSupport from './structured-agent-session-provider-support'
+import { structuredAgentSessionKnownAgentIds } from './structured-agent-session-agent-discovery'
 import * as reveal from './structured-agent-session-reveal'
 import { structuredAgentSessionOwnerStatus } from './structured-agent-session-owner-status'
 import { StructuredAgentSessionHostRuntimeState } from './structured-agent-session-host-runtime-state'
@@ -215,12 +216,7 @@ export class StructuredAgentSessionHost {
   agentDefinitions = () => this.deps.agents.definitions()
 
   /** Saved chats can outlive their registration; both vocabularies bound a client's audience. */
-  knownAgentIds = (): readonly string[] => [
-    ...new Set([
-      ...this.deps.agents.definitions().map(({ agent }) => agent),
-      ...this.deps.store.listRecords().map(({ provider }) => provider)
-    ])
-  ]
+  knownAgentIds = (): readonly string[] => structuredAgentSessionKnownAgentIds(this.deps)
 
   private readonly tabs = sessionTabs.createStructuredAgentSessionTabSurface(
     this,

@@ -112,7 +112,7 @@ export class AcpStructuredOptions {
           ...(choice.description ? { description: choice.description } : {})
         }))
       : []
-    const currentModel = modelOption?.currentValue ?? this.models?.currentModelId ?? ''
+    const currentModel = (modelOption?.currentValue ?? this.models?.currentModelId) || undefined
     const listed: { id: string; label: string; description?: string }[] = modelOption
       ? selectChoices(modelOption).map((choice) => ({
           id: choice.value,
@@ -134,7 +134,7 @@ export class AcpStructuredOptions {
     return {
       models,
       current: {
-        model: currentModel,
+        ...(currentModel ? { model: currentModel } : {}),
         ...(effortOption ? { effort: effortOption.currentValue } : {}),
         confirmed
       }

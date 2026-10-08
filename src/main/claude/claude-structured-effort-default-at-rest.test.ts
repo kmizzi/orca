@@ -305,7 +305,7 @@ describe('Claude effort default at rest', () => {
     const resting = await readAtRest(new AgentModelCatalogStore(), restingRecord({}))
 
     // The built-in list's default is a guess, not this account's: nothing to name.
-    expect(resting.current.model).toBe('')
+    expect(resting.current).not.toHaveProperty('model')
     const seed = getAgentSessionOptionCatalog('claude')!
     const state = [live, resting].reduce(
       (current, answer) => applyStructuredAgentSessionOptions(current, seed, answer),

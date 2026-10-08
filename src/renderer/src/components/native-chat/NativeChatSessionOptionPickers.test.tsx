@@ -3,6 +3,12 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import type * as ReactModule from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { OMP_SESSION_OPTION_CATALOG } from '../../../../shared/agent-session-option-catalog-omp'
+import {
+  applyStructuredAgentSessionOptions,
+  createStructuredAgentSessionOptionState,
+  structuredAgentSessionOptionSnapshot
+} from '../../../../shared/structured-agent-session-options'
 import type { SessionOptionDescriptor } from '../../../../shared/native-chat-session-options'
 import { RuntimeRpcCallError } from '@/runtime/runtime-rpc-result'
 
@@ -419,6 +425,23 @@ describe('NativeChatSessionOptionPickers', () => {
         'true'
       )
     )
+  })
+
+  it('renders a session with no reported model without an empty model control', () => {
+    const state = applyStructuredAgentSessionOptions(
+      createStructuredAgentSessionOptionState('omp'),
+      OMP_SESSION_OPTION_CATALOG,
+      { models: [], current: { effort: 'off', confirmed: ['effort'] } }
+    )
+    render(
+      <NativeChatSessionOptionPickers
+        surface={surface}
+        snapshot={structuredAgentSessionOptionSnapshot(state)}
+        isWorking={false}
+      />
+    )
+    expect(screen.queryByRole('button', { name: /^Model/ })).toBeNull()
+    expect(screen.queryAllByRole('button', { name: '' })).toEqual([])
   })
 
   it('does not duplicate titles for unknown values or misname generic controls', () => {
