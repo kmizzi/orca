@@ -62,6 +62,8 @@ export type NewWorkspaceComposerCardProps = {
   smartNameRepoSwitchTarget?: 'project' | 'task-source'
   primaryActionLabel: string
   projectLabel?: string
+  /** Key caps for the surface's jump-to-Project shortcut; omit where none is bound. */
+  projectShortcutKeys?: string[]
   projectPlaceholder?: string
   emptyProjectMessage?: string
   showAddProjectButton?: boolean
